@@ -23,39 +23,8 @@ int main (int argc, char *argv[])
 	
 	while(!quit)
 	{
-
-		while (SDL_PollEvent(&event)) 
-		{
-			switch(event.type) 
-			{
-				case SDL_KEYUP:
-					switch(event.key.keysym.sym) 
-					{
-						case SDLK_HOME:
-						case SDLK_3:
-						case SDLK_RCTRL:
-						case SDLK_ESCAPE:
-							quit = 1;
-						break;
-						default:
-						break;
-					}
-				break;
-				case SDL_KEYDOWN:
-					switch(event.key.keysym.sym) 
-					{
-						case SDLK_LCTRL:
-						break;
-						default:
-						break;
-					}
-				break;
-				case SDL_QUIT:
-					quit = 1;
-				break;
-			}
-		}
-
+		Poll_Controls();
+		if (keys_status[0] == 1) quit = 1;
 
 		Display_image(tex, 50, 50);
 		Flip_video();

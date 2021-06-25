@@ -8,6 +8,10 @@
 #define Image_data SDL_Surface
 #define Sound_data Mix_Chunk
 
+extern void Poll_Controls();
+
+extern unsigned int keys_status[];
+
 extern Image_data* Load_Image_game(const char* str);
 
 extern inline void Display_image(Image_data* texture_tmp, int x, int y);

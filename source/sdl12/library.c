@@ -35,6 +35,27 @@ static Mix_Music* mus;
 #define SDL_TRIPLEBUF SDL_DOUBLEBUF
 #endif
 
+#define SIZE_LIST 15
+
+const unsigned int keys_to_check[SIZE_LIST] =
+{
+	SDLK_UP,
+	SDLK_DOWN,
+	SDLK_LEFT,
+	SDLK_RIGHT,
+	SDLK_LCTRL,
+	SDLK_LALT,
+	SDLK_LSHIFT,
+	SDLK_SPACE,
+	SDLK_TAB,
+	SDLK_BACKSPACE,
+	SDLK_RETURN,
+	SDLK_ESCAPE,
+	SDLK_PAGEUP,
+	SDLK_PAGEDOWN
+};
+unsigned int keys_status[SIZE_LIST];
+
 Image_data* Load_Image_game(const char* str)
 {
 	SDL_Surface *texture_tmp;
@@ -73,6 +94,8 @@ int Init_Video(int w, int h)
 		printf("SDL_Init failed Window: %s\n", SDL_GetError());
 		return 0;
 	}
+	
+	memset(keys_status, 0, SIZE_LIST - 1);
 	
 	return 1;
 }
@@ -143,4 +166,47 @@ void Unload_music()
 {
 	Mix_HaltMusic();
 	Mix_FreeMusic(mus);	
+}
+
+
+void Poll_Controls()
+{
+	SDL_Event event;
+	unsigned char i;
+	Uint8 *keystate = SDL_GetKeyState(NULL);
+	
+	for(i=0;i<SIZE_LIST;i++)
+	{
+		if (keys_status[i] == 3) keys_status[i] = 0;
+		
+		if (keys_status[i] == 1 && keystate[keys_to_check[i]] == 1)
+		{
+			keys_status[i] = 2;
+		}
+	}
+	
+	while (SDL_PollEvent(&event)) 
+	{
+		for(i=0;i<SIZE_LIST;i++)
+		{
+			switch(event.type) 
+			{
+				case SDL_KEYDOWN:
+					if (event.key.keysym.sym == keys_to_check[i] && keys_status[i] == 0)
+					{
+						keys_status[i] = 1;
+					}
+				break;
+				case SDL_KEYUP:
+					if (event.key.keysym.sym == keys_to_check[i] && keys_status[i] > 0)
+					{
+						keys_status[i] = 3;
+					}
+				break;
+				case SDL_QUIT:
+					//quit = 1;
+				break;
+			}
+		}
+	}
 }

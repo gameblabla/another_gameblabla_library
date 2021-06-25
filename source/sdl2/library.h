@@ -8,9 +8,11 @@
 #define Image_data SDL_Texture
 #define Sound_data Mix_Chunk
 
+extern unsigned int keys_status[];
+
 extern Image_data* Load_Image_game(const char* str);
 
-extern inline void Display_image(Image_data* texture_tmp, int x, int y);
+extern void Display_image(Image_data* texture_tmp, int x, int y);
 
 extern int Init_Video(int w, int h);
 extern void Flip_video(void);
@@ -29,5 +31,7 @@ extern Sound_data* Load_SFX(const char* directory);
 
 extern void Unload_SFX(Sound_data* chk);
 extern void Unload_music();
+
+extern void Poll_Controls();
 
 #endif

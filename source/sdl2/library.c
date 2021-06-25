@@ -32,6 +32,27 @@ static Mix_Music* mus;
 #define FPS_VIDEO 60
 const float real_FPS = 1000/FPS_VIDEO;
 
+#define SIZE_LIST 15
+
+const unsigned int keys_to_check[SIZE_LIST] =
+{
+	SDL_SCANCODE_UP,
+	SDL_SCANCODE_DOWN,
+	SDL_SCANCODE_LEFT,
+	SDL_SCANCODE_RIGHT,
+	SDL_SCANCODE_LCTRL,
+	SDL_SCANCODE_LALT,
+	SDL_SCANCODE_LSHIFT,
+	SDL_SCANCODE_SPACE,
+	SDL_SCANCODE_TAB,
+	SDL_SCANCODE_BACKSPACE,
+	SDL_SCANCODE_RETURN,
+	SDL_SCANCODE_ESCAPE,
+	SDL_SCANCODE_PAGEUP,
+	SDL_SCANCODE_PAGEDOWN
+};
+unsigned int keys_status[SIZE_LIST];
+
 SDL_Texture* Load_Image_game(const char* str)
 {
 	SDL_Texture *texture_tmp;
@@ -170,4 +191,46 @@ void Unload_music()
 {
 	Mix_HaltMusic();
 	Mix_FreeMusic(mus);	
+}
+
+void Poll_Controls()
+{
+	SDL_Event event;
+	unsigned char i;
+	const Uint8 *keystate = SDL_GetKeyboardState(NULL);
+	
+	for(i=0;i<SIZE_LIST;i++)
+	{
+		if (keys_status[i] == 3) keys_status[i] = 0;
+		
+		if (keys_status[i] == 1 && keystate[keys_to_check[i]] == 1)
+		{
+			keys_status[i] = 2;
+		}
+	}
+	
+	while (SDL_PollEvent(&event)) 
+	{
+		for(i=0;i<SIZE_LIST;i++)
+		{
+			switch(event.type) 
+			{
+				case SDL_KEYDOWN:
+					if (event.key.keysym.scancode == keys_to_check[i] && keys_status[i] == 0)
+					{
+						keys_status[i] = 1;
+					}
+				break;
+				case SDL_KEYUP:
+					if (event.key.keysym.scancode == keys_to_check[i] && keys_status[i] > 0)
+					{
+						keys_status[i] = 3;
+					}
+				break;
+				case SDL_QUIT:
+					//quit = 1;
+				break;
+			}
+		}
+	}
 }
