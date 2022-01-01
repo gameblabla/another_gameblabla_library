@@ -98,7 +98,7 @@ int Init_Video(int w, int h)
 		return 0;
 	}
 	
-	if (!SDL_GL_SetSwapInterval(-1))
+	if (SDL_GL_SetSwapInterval(-1))
 	{
 		printf("Freesync not supported or enabled. Renabling Lock FPS again for that reason.\n");
 		flag = SDL_RENDERER_PRESENTVSYNC;
